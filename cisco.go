@@ -53,14 +53,18 @@ func (h *Heroku) colorFor(c string) string {
 }
 
 func colorFn(c string) func(...interface{}) string {
+	var colorAttr color.Attribute
+
 	switch c {
 	case "yellow":
-		return color.New(color.FgYellow).SprintFunc()
+		colorAttr = color.FgYellow
 	case "red":
-		return color.New(color.FgRed).SprintFunc()
+		colorAttr = color.FgRed
 	default:
-		return color.New(color.FgGreen).SprintFunc()
+		colorAttr = color.FgGreen
 	}
+
+	return color.New(colorAttr).SprintFunc()
 }
 
 func (h *Heroku) String() string {
