@@ -38,17 +38,29 @@ func (h *Heroku) DevelopmentStatus() string {
 	return fmt.Sprintf("%s: %s", "Development", h.colorFor(h.Status.Development))
 }
 
-func (h *Heroku) colorFor(c string) (status string) {
+func (h *Heroku) colorFor(c string) string {
+	cfn := colorFn(c)
+
 	switch c {
 	case "green":
-		status = color.New(color.FgGreen).SprintFunc()("[ok]")
-	case "yellow":
-		issue := h.Issues[0].Updates[0]
-		info := fmt.Sprintf("[%s] - %s", issue.Title, issue.Contents)
-		status = color.New(color.FgYellow).SprintFunc()(info)
-	}
+		return cfn("[ok]")
 
-	return status
+	default:
+		issue := h.Issues[0].Updates[0]
+		info := fmt.Sprintf("[%s] \n%s", issue.Title, issue.Contents)
+		return cfn(info)
+	}
+}
+
+func colorFn(c string) func(...interface{}) string {
+	switch c {
+	case "yellow":
+		return color.New(color.FgYellow).SprintFunc()
+	case "red":
+		return color.New(color.FgRed).SprintFunc()
+	default:
+		return color.New(color.FgGreen).SprintFunc()
+	}
 }
 
 func (h *Heroku) String() string {
